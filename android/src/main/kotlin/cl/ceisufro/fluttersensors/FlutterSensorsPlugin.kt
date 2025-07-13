@@ -14,10 +14,9 @@ class FlutterSensorsPlugin() : FlutterPlugin, MethodCallHandler {
     private lateinit var messenger: BinaryMessenger
     private lateinit var sensorManager: SensorManager
 
-    constructor(context: Context, binaryMessenger: BinaryMessenger) : this() {
-        this.context = context
-        this.messenger = binaryMessenger
-        this.sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+
+    companion object {
+        private const val CHANNEL_NAME = "flutter_sensors"
     }
 
     override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -28,23 +27,6 @@ class FlutterSensorsPlugin() : FlutterPlugin, MethodCallHandler {
         methodChannel.setMethodCallHandler(this)
     }
 
-    companion object {
-        private const val CHANNEL_NAME = "flutter_sensors"
-
-        @Suppress("deprecation")
-        @JvmStatic
-        fun registerWith(registrar: PluginRegistry.Registrar) {
-            val methodChannel = MethodChannel(registrar.messenger(), CHANNEL_NAME)
-            val context = registrar.context()
-            val binaryMessenger = registrar.messenger()
-            val plugin = FlutterSensorsPlugin(context, binaryMessenger)
-            methodChannel.setMethodCallHandler(plugin)
-            registrar.addViewDestroyListener {
-                plugin.onDestroy()
-                false
-            }
-        }
-    }
 
     override fun onDetachedFromEngine(p0: FlutterPlugin.FlutterPluginBinding) {
         removeAllListeners()
